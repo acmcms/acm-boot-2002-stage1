@@ -208,7 +208,7 @@ final class Plug {
 		while (st.hasMoreTokens()) {
 			final String current = st.nextToken();
 			final long value = Integer.parseInt( current );
-			result.add( new Long( value ) );
+			result.add( Long.valueOf( value ) );
 		}
 		return result;
 	}

@@ -7,31 +7,31 @@
 package ae2core;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import ru.myx.ae3.flow.ObjectBuffer;
 import ru.myx.ae3.flow.ObjectBufferArray;
 import ru.myx.ae3.help.Convert;
 import ru.myx.ae3.help.Search;
 
-/**
- * @author myx
+/** @author myx
  *
- *         To change the template for this generated type comment go to
- *         Window>Preferences>Java>Code Generation>Code and Comments
- */
+ *         To change the template for this generated type comment go to Window>Preferences>Java>Code
+ *         Generation>Code and Comments */
 class Tests {
-	
+
 	static boolean tests() {
-		
+
 		System.out.println("AE2-CORE-TEST: Tests requested - starting tests.");
 		{
 			System.out.print("AE2-CORE-TEST: Boot loader resource test: url=");
 			System.out.print(Tests.class.getClassLoader().getResource("ae2core/test-resource.txt"));
 			System.out.print(", stream=");
 			final InputStream stream = Tests.class.getClassLoader().getResourceAsStream("ae2core/test-resource.txt");
-			System.out.print(stream == null
-				? "null"
-				: stream.getClass().getName());
+			System.out.print(
+					stream == null
+						? "null"
+						: stream.getClass().getName());
 			System.out.print(", relative=");
 			System.out.print(Tests.class.getResource("test-resource.txt"));
 			assert stream != null : "resources are not accessible!";
@@ -43,7 +43,7 @@ class Tests {
 					{
 							Integer.class, Integer.class, Integer.class
 					}, {
-							Comparable.class, Integer.class, String.class
+							Comparable.class, Integer.class, Date.class
 					}, {
 							Number.class, Integer.class, Double.class
 					}, {
@@ -57,6 +57,8 @@ class Tests {
 				final Class<?> result = Search.Reflection.commonSuperclass(line[1], line[2]);
 				if (line[0].isAssignableFrom(result)) {
 					ok++;
+				} else {
+					System.out.println(" >> TEST FAILED: expect: " + line[0] + ", result: " + result);
 				}
 			}
 			if (ok == pattern.length) {
@@ -70,19 +72,20 @@ class Tests {
 		{
 			System.out.print("AE2-CORE-TEST: Any-To-Int conversion: ");
 			final class Test {
-				
+
 				public final int result;
 
 				public final Object source;
 
 				Test(final int result, final Object source) {
+
 					this.result = result;
 					this.source = source;
 				}
 			}
 			final Test[] pattern = {
-					new Test(14, new Integer(14)), new Test(15, new Double(15.7)), new Test(-255, "-255"), new Test(255, "255"), new Test(256, "0x100"), new Test(1, "true"),
-					new Test(1, "TRUE"), new Test(0, "false"), new Test(0, "FaLsE"), new Test(1024, "1k"), new Test(1024 + 512, "1.5k"),
+					new Test(14, Integer.valueOf(14)), new Test(15, Double.valueOf(15.7)), new Test(-255, "-255"), new Test(255, "255"), new Test(256, "0x100"),
+					new Test(1, "true"), new Test(1, "TRUE"), new Test(0, "false"), new Test(0, "FaLsE"), new Test(1024, "1k"), new Test(1024 + 512, "1.5k"),
 					new Test(1024 * 1024 * 1024 + 2 * 1024 + 6, "1g 2K 6"), new Test(1030 + 2 * 1024 * 1024, "2m1K6"),
 			};
 			int ok = 0;
@@ -105,19 +108,20 @@ class Tests {
 		{
 			System.out.print("AE2-CORE-TEST: Any-To-Long conversion: ");
 			final class Test {
-				
+
 				public final long result;
 
 				public final Object source;
 
 				Test(final long result, final Object source) {
+
 					this.result = result;
 					this.source = source;
 				}
 			}
 			final Test[] pattern = {
-					new Test(14, new Integer(14)), new Test(15, new Double(15.7)), new Test(-255, "-255"), new Test(255, "255"), new Test(256, "0x100"), new Test(1, "true"),
-					new Test(1, "TRUE"), new Test(0, "false"), new Test(0, "FaLsE"), new Test(1024, "1k"), new Test(1024 + 512, "1.5k"),
+					new Test(14, Integer.valueOf(14)), new Test(15, Double.valueOf(15.7)), new Test(-255, "-255"), new Test(255, "255"), new Test(256, "0x100"),
+					new Test(1, "true"), new Test(1, "TRUE"), new Test(0, "false"), new Test(0, "FaLsE"), new Test(1024, "1k"), new Test(1024 + 512, "1.5k"),
 					new Test(ru.myx.ae3.help.Convert.MUL_GIGA + 2 * 1024 + 6, "1g 2K 6"), new Test(1030 + 2 * 1024 * 1024, "2m1K6"),
 			};
 			int ok = 0;
@@ -140,12 +144,13 @@ class Tests {
 		{
 			System.out.print("AE2-CORE-TEST: Any-To-Period conversion: ");
 			final class Test {
-				
+
 				public final long result;
 
 				public final Object source;
 
 				Test(final long result, final Object source) {
+
 					this.result = result;
 					this.source = source;
 				}
