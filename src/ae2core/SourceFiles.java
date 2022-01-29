@@ -6,10 +6,9 @@ package ae2core;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import ru.myx.ae3.Engine;
 
 /**
  * @author myx
@@ -52,7 +51,7 @@ public final class SourceFiles implements Source {
 					list.append( '\r' );
 					list.append( '\n' );
 				}
-				return list.toString().getBytes( Engine.CHARSET_UTF8 );
+				return list.toString().getBytes( StandardCharsets.UTF_8 );
 			}
 			return null;
 		} catch (final IOException e) {

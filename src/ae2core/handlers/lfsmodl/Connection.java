@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 
-import ru.myx.ae3.Engine;
 import ru.myx.io.DataInputByteArrayFast;
 import ae2core.Source;
 
@@ -39,7 +39,7 @@ final class Connection extends URLConnection {
 				list.append( '\r' );
 				list.append( '\n' );
 			}
-			data = list.toString().getBytes( Engine.CHARSET_UTF8 );
+			data = list.toString().getBytes( StandardCharsets.UTF_8 );
 		} else if (data == null) {
 			throw new IOException( "No such data: " + url );
 		}
