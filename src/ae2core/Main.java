@@ -25,11 +25,11 @@ import ru.myx.ae3boot.ThreadBootACM;
  * myx - barachta */
 /** @author barachta */
 public class Main {
-
+	
 	private static boolean virgin = true;
-
+	
 	private static final void initFeatures(final PlugLoaderCore commonLoader, final String[] args) throws Exception {
-
+		
 		System.out.println("AE2-CORE: Initializing features...");
 		final PlugLoaderFeature.FeatureChooserFilter filter = new PlugLoaderFeature.FeatureChooserFilter();
 		final File root = new File(Engine.PATH_PUBLIC, "features");
@@ -76,9 +76,9 @@ public class Main {
 			}
 		}
 	}
-
+	
 	private static final void initHandlers() {
-
+		
 		final String property = System.getProperty("java.protocol.handler.pkgs", "");
 		if (property.indexOf("ae2core.handlers") == -1) {
 			if (property.length() == 0) {
@@ -99,9 +99,9 @@ public class Main {
 			System.setProperty("java.protocol.handler.pkgs", property);
 		}
 	}
-
+	
 	private static final void initModules(final PlugLoaderCore commonLoader) throws Exception {
-
+		
 		System.out.println("AE2-CORE: Initializing modules...");
 		final PlugLoaderModule.ModuleChooserFilter filter = new PlugLoaderModule.ModuleChooserFilter();
 		final File root = new File(Engine.PATH_PUBLIC, "modules");
@@ -144,14 +144,14 @@ public class Main {
 					arguments.add(st.nextToken());
 				}
 				new Thread("BOOT: async command: " + commandClass) {
-
+					
 					{
 						this.setDaemon(true);
 					}
-
+					
 					@Override
 					public void run() {
-
+						
 						System.out.println("AE2-CORE: invoking async command: " + commandClass);
 						System.out.flush();
 						try {
@@ -164,14 +164,14 @@ public class Main {
 			}
 		}
 	}
-
+	
 	private static final void initStorage() {
-
+		
 		System.out.println("AE2-CORE: Initializing storage...");
 	}
-
+	
 	static final void invokeClass(final String[] args, final ClassLoader loader, final String className) throws Exception {
-
+		
 		final Class<?> mainClass = Class.forName(className, true, loader);
 		final Method mtd = mainClass.getMethod("main", String[].class);
 		if (mtd != null) {
@@ -185,14 +185,16 @@ public class Main {
 			System.out.println("AE2-CORE: No main method found ('" + className + "') - skipping.");
 		}
 	}
-
+	
 	/** @param args
 	 * @throws Throwable */
 	public static void main(final String[] args) throws Throwable {
-
+		
 		System.out.println("AE2-CORE: init start");
+		
 		/** default log type is 'stderr', we're replacing default with 'files'. */
 		System.setProperty("ru.myx.ae3.properties.log.type", System.getProperty("ru.myx.ae3.properties.log.type", "files"));
+
 		/**
 		 *
 		 */
@@ -201,13 +203,19 @@ public class Main {
 			Main.virgin = false;
 			URL.setURLStreamHandlerFactory(new JavaGeneticsStreamHandlerFactory());
 		}
+		
 		if (Tests.tests()) {
 			return;
 		}
+		
 		Main.initHandlers();
+		
 		final PlugLoaderCore commonLoader = new PlugLoaderCore();
+		
 		Main.initFeatures(commonLoader, args);
+		
 		Main.initStorage();
+		
 		if (args != null && args.length > 1) {
 			if ("--tool".equals(args[0])) {
 				final File tools = new File(Engine.PATH_PUBLIC, "tools");
@@ -243,28 +251,45 @@ public class Main {
 			}
 			return;
 		}
+		
 		Main.initModules(commonLoader);
+		
 		if (args != null && args.length > 0 && "server".equals(args[0])) {
 			if (Thread.currentThread().isDaemon()) {
 				System.out.println("AE2-CORE: Daemon thread - exiting after initialization.");
 				System.out.flush();
 				return;
 			}
-
+			
 			System.out.println("AE2-CORE: Non-daemon thread - starting console thread.");
 			System.out.flush();
-
+			
 			final Thread consoleThread = MainConsole.startConsoleThread( //
 					Storage.getRoot(Exec.getRootProcess()),
-					args, //
+					null, //
 					new String[]{
 							"server"
 					} //
 			);
-
-			MainConsole.waitConsoleThread(consoleThread);
-			System.out.println("AE2-CORE: Non-daemon thread - console thread finished.");
+			
+			if (!MainConsole.waitConsoleThread(consoleThread)) {
+				System.out.println("AE2-CORE: Non-daemon thread - console thread finished with errors!");
+				System.out.flush();
+				return;
+			}
+			System.out.println("AE2-CORE: Non-daemon thread - entering idle loop.");
 			System.out.flush();
+
+			for (; !Thread.interrupted();) {
+				try {
+					Thread.sleep(15000L);
+				} catch (final InterruptedException e) {
+					break;
+				}
+			}
+			System.out.println("AE2-CORE: Non-daemon thread - finished idle loop.");
+			System.out.flush();
+			
 		}
 	}
 }
